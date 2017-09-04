@@ -1,0 +1,74 @@
+#!/bin/bash
+KEYSTORE_DIR='/etc/pki'
+TMP_DIR='/tmp'
+BACKUP_ROOT_DIR="$HOME/Certs/backups"
+BACKUP_DIR="$BACKUP_ROOT_DIR/$(date +"%d%m%Y-%H%M%S")"
+SSH_CONFIG_DIR="$HOME/.ssh"
+WORKSPACE_DIR="$HOME/workspace"
+REQUIRED_DIRS=($KEYSTORE_DIR $TMP_DIR $SSH_CONFIG_DIR $WORKSPACE_DIR $BACKUP_ROOT_DIR)
+
+for DIR in "${REQUIRED_DIRS[@]}"; do
+    if [ ! -d $DIR ]; then
+        read -p "Required directory does not exist. Will create ($DIR), press enter to continue or CTRL-C to exit: " 
+        mkdir -p $DIR
+    fi
+done
+
+echo 'Creating backup directory...'
+mkdir $BACKUP_DIR
+
+echo 'Backing up existing files...'
+if [ -f "$KEYSTORE_DIR/certificate.p12" ]; then
+    sudo mv "$KEYSTORE_DIR/certificate.p12" "$BACKUP_DIR/certificate.p12"
+fi
+if [ -f "$KEYSTORE_DIR/certificate.pem" ]; then
+    sudo mv "$KEYSTORE_DIR/certificate.pem" "$BACKUP_DIR/certificate.pem"
+fi
+if [ -f "$SSH_CONFIG_DIR/id_rsa" ]; then
+    mv "$SSH_CONFIG_DIR/id_rsa" "$BACKUP_DIR/id_rsa"
+fi
+if [ -f "$SSH_CONFIG_DIR/id_rsa.pub" ]; then
+    mv "$SSH_CONFIG_DIR/id_rsa.pub" "$BACKUP_DIR/id_rsa.pub"
+fi
+if [ -f "$WORKSPACE_DIR/dev.bbc.co.uk.p12" ]; then
+    mv "$WORKSPACE_DIR/dev.bbc.co.uk.p12" "$BACKUP_DIR/dev.bbc.co.uk.p12"
+fi
+if [ -f "$KEYSTORE_DIR/tls/certs/ca-bundle.crt" ]; then
+    sudo mv "$KEYSTORE_DIR/tls/certs/ca-bundle.crt" "$BACKUP_DIR/ca-bundle.crt"
+fi
+ 
+read -p $'\nPlease enter your certificate password:' -s CERT_PASSWORD
+ 
+echo "\nConverting ($1) to PEM..."
+sudo cp $1 "$KEYSTORE_DIR/certificate.p12"
+openssl pkcs12 -in $1 -out "$WORKSPACE_DIR/certificate.pem" -nodes -clcerts -passin "pass:$CERT_PASSWORD"
+sudo cp "$WORKSPACE_DIR/certificate.pem" "$KEYSTORE_DIR/certificate.pem"
+ 
+read -p $'\nPlease enter your private key password (or enter to use your certificate password):' -s PRIVATE_KEY_PASSWORD
+PRIVATE_KEY_PASSWORD=${PRIVATE_KEY_PASSWORD:-$CERT_PASSWORD}
+ 
+echo "\nCreating SSH config..."
+openssl pkcs12 -in $1 -nodes -clcerts -nocerts -passin "pass:$CERT_PASSWORD" | openssl rsa -passout "pass:$PRIVATE_KEY_PASSWORD" > "$SSH_CONFIG_DIR/id_rsa"
+chmod 400 "$SSH_CONFIG_DIR/id_rsa"
+ssh-keygen -y -f "$SSH_CONFIG_DIR/id_rsa" > "$SSH_CONFIG_DIR/id_rsa.pub"
+echo "$(cat "$SSH_CONFIG_DIR/id_rsa.pub") $2" > "$SSH_CONFIG_DIR/id_rsa.pub"
+ 
+echo "\nDownloading cloud CA..."
+curl https://ca.dev.bbc.co.uk/cloud-ca.pem > "$TMP_DIR/cloud-ca.pem"
+ 
+echo "\nExporting system CAs..."
+security find-certificate -a -p /System/Library/Keychains/SystemRootCertificates.keychain > "$TMP_DIR/root-cas.pem"
+ 
+echo 'Creating CA bundle...'
+sudo mkdir -p "$KEYSTORE_DIR/tls/certs"
+cat "$TMP_DIR/root-cas.pem" "$TMP_DIR/cloud-ca.pem" > "$TMP_DIR/ca-bundle.crt"
+sudo mv "$TMP_DIR/ca-bundle.crt" "$KEYSTORE_DIR/tls/certs/ca-bundle.crt"
+sudo chmod og+r "$KEYSTORE_DIR/tls/certs/ca-bundle.crt"
+ 
+echo 'Updating NPM alias...'
+alias npm="npm --registry https://npm.morph.int.tools.bbc.co.uk --cert=\"$(cat $KEYSTORE_DIR/certificate.pem)\" --key=\"$(cat $KEYSTORE_DIR/certificate.pem)\" --cafile=$KEYSTORE_DIR/tls/certs/ca-bundle.crt"
+ 
+echo 'Removing temporary files...'
+rm "$TMP_DIR/root-cas.pem" "$TMP_DIR/cloud-ca.pem"
+ 
+echo "\nCertificates updated."
