@@ -1,3 +1,23 @@
+# Development Certificate Update Script
+# This script automates cert conversion and backup for SSH and Morph development.
+# ---
+# Usage: 
+# 
+# sudo sh ~/Scripts/cert-update.sh ~/your-cert.p12 [your@email.com]
+# ---
+# Resulting files:
+#
+# /etc/pki
+#     certificate.p12
+#     certificate.pem
+# /etc/pki/tls/certs
+#     ca-bundle.crt
+# ~/.ssh
+#     id_rsa
+#     id_rsa.pub
+# ---
+# Your private key (~/.ssh/id_rsa) is protected with the certificate export password if none is specified.
+
 #!/bin/bash
 KEYSTORE_DIR='/etc/pki'
 TMP_DIR='/tmp'
