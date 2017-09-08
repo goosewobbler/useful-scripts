@@ -16,6 +16,7 @@
 #     id_rsa
 #     id_rsa.pub
 # ---
+# Backups of these files are created and stored in ~/Certs/backups by default.
 # Your private key (~/.ssh/id_rsa) is protected with the certificate export password if none is specified.
 
 #!/bin/bash
