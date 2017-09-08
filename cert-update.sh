@@ -49,13 +49,13 @@ if [ -f "$KEYSTORE_DIR/certificate.pem" ]; then
     politedo mv "$KEYSTORE_DIR/certificate.pem" "$BACKUP_DIR/certificate.pem"
 fi
 if [ -f "$SSH_CONFIG_DIR/id_rsa" ]; then
-    mv "$SSH_CONFIG_DIR/id_rsa" "$BACKUP_DIR/id_rsa"
+    politedo mv "$SSH_CONFIG_DIR/id_rsa" "$BACKUP_DIR/id_rsa"
 fi
 if [ -f "$SSH_CONFIG_DIR/id_rsa.pub" ]; then
-    mv "$SSH_CONFIG_DIR/id_rsa.pub" "$BACKUP_DIR/id_rsa.pub"
+    politedo mv "$SSH_CONFIG_DIR/id_rsa.pub" "$BACKUP_DIR/id_rsa.pub"
 fi
 if [ -f "$WORKSPACE_DIR/dev.bbc.co.uk.p12" ]; then
-    mv "$WORKSPACE_DIR/dev.bbc.co.uk.p12" "$BACKUP_DIR/dev.bbc.co.uk.p12"
+    politedo mv "$WORKSPACE_DIR/dev.bbc.co.uk.p12" "$BACKUP_DIR/dev.bbc.co.uk.p12"
 fi
 if [ -f "$KEYSTORE_DIR/tls/certs/ca-bundle.crt" ]; then
     politedo mv "$KEYSTORE_DIR/tls/certs/ca-bundle.crt" "$BACKUP_DIR/ca-bundle.crt"
