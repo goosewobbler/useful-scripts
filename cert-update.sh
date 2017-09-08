@@ -72,6 +72,10 @@ openssl pkcs12 -in $1 -nodes -clcerts -nocerts -passin "pass:$CERT_PASSWORD" | o
 chmod 400 "$SSH_CONFIG_DIR/id_rsa"
 ssh-keygen -y -f "$SSH_CONFIG_DIR/id_rsa" > "$SSH_CONFIG_DIR/id_rsa.pub"
 echo "$(cat "$SSH_CONFIG_DIR/id_rsa.pub") $2" > "$SSH_CONFIG_DIR/id_rsa.pub"
+
+echo '\nAdding private key to SSH agent...'
+eval "$(ssh-agent -s)"
+sudo ssh-add -K ~/.ssh/id_rsa
  
 echo "\nDownloading cloud CA..."
 curl https://ca.dev.bbc.co.uk/cloud-ca.pem > "$TMP_DIR/cloud-ca.pem"
