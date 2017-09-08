@@ -56,14 +56,14 @@ backup $SSH_CONFIG_DIR 'id_rsa.pub'
 backup $WORKSPACE_DIR 'dev.bbc.co.uk.p12'
 backup $CA_BUNDLE_DIR 'ca-bundle.crt'
  
-read -p $'\nPlease enter your certificate password:' -s CERT_PASSWORD
+read -p $'\nPlease enter your certificate password: ' -s CERT_PASSWORD
  
 echo "\nConverting ($1) to PEM..."
 politedo cp $1 "$KEYSTORE_DIR/certificate.p12"
 politedo openssl pkcs12 -in $1 -out "$WORKSPACE_DIR/certificate.pem" -nodes -clcerts -passin "pass:$CERT_PASSWORD"
 politedo cp "$WORKSPACE_DIR/certificate.pem" "$KEYSTORE_DIR/certificate.pem"
  
-read -p $'\nPlease enter your private key password (or enter to use your certificate password):' -s PRIVATE_KEY_PASSWORD
+read -p $'\nPlease enter your private key password (or enter to use your certificate password): ' -s PRIVATE_KEY_PASSWORD
 PRIVATE_KEY_PASSWORD=${PRIVATE_KEY_PASSWORD:-$CERT_PASSWORD}
  
 echo "\nCreating SSH config..."
