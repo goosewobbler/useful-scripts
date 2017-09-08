@@ -21,6 +21,7 @@
 #!/bin/bash
 KEYSTORE_DIR='/etc/pki'
 TMP_DIR='/tmp'
+CA_BUNDLE_DIR="$KEYSTORE_DIR/tls/certs"
 BACKUP_ROOT_DIR="$HOME/Certs/backups"
 BACKUP_DIR="$BACKUP_ROOT_DIR/$(date +"%d%m%Y-%H%M%S")"
 SSH_CONFIG_DIR="$HOME/.ssh"
@@ -29,6 +30,12 @@ REQUIRED_DIRS=($KEYSTORE_DIR $TMP_DIR $SSH_CONFIG_DIR $WORKSPACE_DIR $BACKUP_ROO
 
 function politedo() { 
     sudo -p "Sudo required for this step, please enter your password: " "$@"
+}
+
+function backup() {
+    if [ -f "$1" ]; then
+        politedo mv "$1/$2" "$BACKUP_DIR/$2"
+    fi
 }
 
 for DIR in "${REQUIRED_DIRS[@]}"; do
@@ -42,24 +49,12 @@ echo 'Creating backup directory...'
 mkdir $BACKUP_DIR
 
 echo 'Backing up existing files...'
-if [ -f "$KEYSTORE_DIR/certificate.p12" ]; then
-    politedo mv "$KEYSTORE_DIR/certificate.p12" "$BACKUP_DIR/certificate.p12"
-fi
-if [ -f "$KEYSTORE_DIR/certificate.pem" ]; then
-    politedo mv "$KEYSTORE_DIR/certificate.pem" "$BACKUP_DIR/certificate.pem"
-fi
-if [ -f "$SSH_CONFIG_DIR/id_rsa" ]; then
-    politedo mv "$SSH_CONFIG_DIR/id_rsa" "$BACKUP_DIR/id_rsa"
-fi
-if [ -f "$SSH_CONFIG_DIR/id_rsa.pub" ]; then
-    politedo mv "$SSH_CONFIG_DIR/id_rsa.pub" "$BACKUP_DIR/id_rsa.pub"
-fi
-if [ -f "$WORKSPACE_DIR/dev.bbc.co.uk.p12" ]; then
-    politedo mv "$WORKSPACE_DIR/dev.bbc.co.uk.p12" "$BACKUP_DIR/dev.bbc.co.uk.p12"
-fi
-if [ -f "$KEYSTORE_DIR/tls/certs/ca-bundle.crt" ]; then
-    politedo mv "$KEYSTORE_DIR/tls/certs/ca-bundle.crt" "$BACKUP_DIR/ca-bundle.crt"
-fi
+backup $KEYSTORE_DIR 'certificate.p12'
+backup $KEYSTORE_DIR 'certificate.pem'
+backup $SSH_CONFIG_DIR 'id_rsa'
+backup $SSH_CONFIG_DIR 'id_rsa.pub'
+backup $WORKSPACE_DIR 'dev.bbc.co.uk.p12'
+backup $CA_BUNDLE_DIR 'ca-bundle.crt'
  
 read -p $'\nPlease enter your certificate password:' -s CERT_PASSWORD
  
@@ -86,11 +81,11 @@ security find-certificate -a -p /System/Library/Keychains/SystemRootCertificates
 echo 'Creating CA bundle...'
 politedo mkdir -p "$KEYSTORE_DIR/tls/certs"
 cat "$TMP_DIR/root-cas.pem" "$TMP_DIR/cloud-ca.pem" > "$TMP_DIR/ca-bundle.crt"
-politedo mv "$TMP_DIR/ca-bundle.crt" "$KEYSTORE_DIR/tls/certs/ca-bundle.crt"
-politedo chmod og+r "$KEYSTORE_DIR/tls/certs/ca-bundle.crt"
+politedo mv "$TMP_DIR/ca-bundle.crt" "$CA_BUNDLE_DIR/ca-bundle.crt"
+politedo chmod og+r "$CA_BUNDLE_DIR/ca-bundle.crt"
  
 echo 'Updating NPM alias...'
-alias npm="npm --registry https://npm.morph.int.tools.bbc.co.uk --cert=\"$(cat $KEYSTORE_DIR/certificate.pem)\" --key=\"$(cat $KEYSTORE_DIR/certificate.pem)\" --cafile=$KEYSTORE_DIR/tls/certs/ca-bundle.crt"
+alias npm="npm --registry https://npm.morph.int.tools.bbc.co.uk --cert=\"$(cat $KEYSTORE_DIR/certificate.pem)\" --key=\"$(cat $KEYSTORE_DIR/certificate.pem)\" --cafile=$CA_BUNDLE_DIR/ca-bundle.crt"
  
 echo 'Removing temporary files...'
 rm "$TMP_DIR/root-cas.pem" "$TMP_DIR/cloud-ca.pem"
