@@ -44,7 +44,7 @@ function backup() {
     ORIGINAL="$1/$2"
     BACKUP="$BACKUP_DIR/$2"
     if [ -f $ORIGINAL ]; then
-        politeSudo echo "$ORIGINAL => $BACKUP"; politeSudo mv $ORIGINAL $BACKUP;
+        politeSudo echo "$ORIGINAL => $BACKUP"; politeSudo mv $ORIGINAL $BACKUP
     fi
 }
 
