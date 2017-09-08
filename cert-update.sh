@@ -67,7 +67,7 @@ read -p $'\nPlease enter your private key password (or enter to use your certifi
 PRIVATE_KEY_PASSWORD=${PRIVATE_KEY_PASSWORD:-$CERT_PASSWORD}
  
 echo "\nCreating SSH config..."
-openssl pkcs12 -in $1 -nodes -clcerts -nocerts -passin "pass:$CERT_PASSWORD" | openssl rsa -passout "pass:$PRIVATE_KEY_PASSWORD" > "$SSH_CONFIG_DIR/id_rsa"
+politedo openssl pkcs12 -in $1 -nodes -clcerts -nocerts -passin "pass:$CERT_PASSWORD" | openssl rsa -passout "pass:$PRIVATE_KEY_PASSWORD" > "$SSH_CONFIG_DIR/id_rsa"
 chmod 400 "$SSH_CONFIG_DIR/id_rsa"
 ssh-keygen -y -f "$SSH_CONFIG_DIR/id_rsa" > "$SSH_CONFIG_DIR/id_rsa.pub"
 echo "$(cat "$SSH_CONFIG_DIR/id_rsa.pub") $2" > "$SSH_CONFIG_DIR/id_rsa.pub"
