@@ -3,7 +3,7 @@
 # ---
 # Usage: 
 # 
-# sudo sh ~/Scripts/cert-update.sh ~/your-cert.p12 [your@email.com]
+# sh ~/Scripts/cert-update.sh ~/your-cert.p12 [your@email.com]
 # ---
 # Resulting files:
 #
