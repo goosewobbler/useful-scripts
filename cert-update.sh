@@ -33,8 +33,11 @@ function politedo() {
 }
 
 function backup() {
-    if [ -f "$1" ]; then
-        politedo mv "$1/$2" "$BACKUP_DIR/$2"
+    ORIGINAL="$1/$2"
+    BACKUP="$BACKUP_DIR/$2"
+    if [ -f $ORIGINAL ]; then
+        echo "$ORIGINAL => $BACKUP"
+        politedo mv $ORIGINAL $BACKUP
     fi
 }
 
