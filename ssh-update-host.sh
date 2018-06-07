@@ -1,6 +1,10 @@
 # This script is a simple function to update the SSH known_hosts file before connecting to the specified server.
 # For use when you want to connect to a server whose key fingerprint has recently changed.
-# usage: ssh-update blah@127.0.0.1
+# ---
+# Usage: 
+# 
+# ssh-update blah@127.0.0.1
+# ---
 # Currently only supports IPV4 addresses
 
 removeKnownHostAndConnect() {
