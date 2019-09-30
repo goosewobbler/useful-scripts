@@ -10,6 +10,7 @@
 # /etc/pki
 #     certificate.p12
 #     certificate.pem
+#     cloud-ca.pem
 # /etc/pki/tls/certs
 #     ca-bundle.crt
 # ~/.ssh
@@ -59,6 +60,7 @@ mkdir $BACKUP_DIR
 echo 'Backing up existing files...'
 backup $KEYSTORE_DIR 'certificate.p12'
 backup $KEYSTORE_DIR 'certificate.pem'
+backup $KEYSTORE_DIR 'cloud-ca.pem'
 backup $SSH_CONFIG_DIR 'id_rsa'
 backup $SSH_CONFIG_DIR 'id_rsa.pub'
 backup $WORKSPACE_DIR 'dev.bbc.co.uk.p12'
@@ -82,6 +84,7 @@ echo "$(cat "$SSH_CONFIG_DIR/id_rsa.pub") $2" > "$SSH_CONFIG_DIR/id_rsa.pub"
  
 echo "\nDownloading cloud CA..."
 curl https://ca.dev.bbc.co.uk/cloud-ca.pem > "$TMP_DIR/cloud-ca.pem"
+politeSudo mv "$TMP_DIR/cloud-ca.pem" "$KEYSTORE_DIR/ca-bundle.crt"
  
 echo "\nExporting system CAs..."
 security find-certificate -a -p /System/Library/Keychains/SystemRootCertificates.keychain > "$TMP_DIR/root-cas.pem"
