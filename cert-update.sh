@@ -105,7 +105,7 @@ rm "$TMP_DIR/root-cas.pem" "$TMP_DIR/cloud-ca.pem"
 
 echo "\nCertificates updated."
 
-read -p $'\nPlease enter an alias for morph npm (or press enter if you do not wish to set an alias): ' MORPH_NPM_ALIAS
+read -p $'\nPlease enter an alias for morph npm (press enter if you do not wish to set an alias): ' MORPH_NPM_ALIAS
 
 if [ $MORPH_NPM_ALIAS ]; then
     alias $MORPH_NPM_ALIAS="$MORPH_NPM_COMMAND"
