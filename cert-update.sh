@@ -20,7 +20,7 @@
 #     id_rsa.pub
 #
 # Backups of these files are created and stored in ~/Certs/backups by default.
-# The certificate is also imported to your login Keychain.
+# The certificate is also imported to your Keychain.
 # The private key (~/.ssh/id_rsa) is protected with the certificate export password if none is specified.
 
 #!/bin/bash
@@ -78,7 +78,7 @@ read -sp $'\nPlease enter your certificate password: ' CERT_PASSWORD
 
 echo "\nImporting ($1) to cert store and Keychain..."
 politeSudo cp $1 "$KEYSTORE_DIR/certificate.p12"
-security import $1 -k "$HOME/Library/Keychains/login.keychain" -P $CERT_PASSWORD
+security import $1 -P $CERT_PASSWORD
  
 echo "\nConverting ($1) to PEM..."
 politeSudo openssl pkcs12 -in $1 -out "$WORKSPACE_DIR/certificate.pem" -nodes -clcerts -passin "pass:$CERT_PASSWORD"
