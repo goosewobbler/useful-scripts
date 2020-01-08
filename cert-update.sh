@@ -72,9 +72,12 @@ backup $WORKSPACE_DIR 'dev.bbc.co.uk.p12'
 backup $CA_BUNDLE_DIR 'ca-bundle.crt'
  
 read -sp $'\nPlease enter your certificate password: ' CERT_PASSWORD
+
+echo "\nImporting ($1) to cert store and Keychain..."
+politeSudo cp $1 "$KEYSTORE_DIR/certificate.p12"
+security import $1 -k "$HOME/Library/Keychains/login.keychain" -P $CERT_PASSWORD
  
 echo "\nConverting ($1) to PEM..."
-politeSudo cp $1 "$KEYSTORE_DIR/certificate.p12"
 politeSudo openssl pkcs12 -in $1 -out "$WORKSPACE_DIR/certificate.pem" -nodes -clcerts -passin "pass:$CERT_PASSWORD"
 politeSudo cp "$WORKSPACE_DIR/certificate.pem" "$KEYSTORE_DIR/certificate.pem"
  
