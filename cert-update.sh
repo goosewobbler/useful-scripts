@@ -1,10 +1,12 @@
-# Development Certificate Update Script
-# This script automates cert conversion and backup for SSH and Morph development.
+# Development Certificate Update Script - Mac only
+# This script automates cert conversion and backup for SSH and Morph/Mozart development.
+#
 # ---
 # Usage: 
 # 
 # sh ~/Scripts/cert-update.sh ~/your-cert.p12 [your@email.com]
 # ---
+#
 # Resulting files:
 #
 # /etc/pki
@@ -16,9 +18,10 @@
 # ~/.ssh
 #     id_rsa
 #     id_rsa.pub
-# ---
+#
 # Backups of these files are created and stored in ~/Certs/backups by default.
-# Your private key (~/.ssh/id_rsa) is protected with the certificate export password if none is specified.
+# The certificate is also imported to your login Keychain.
+# The private key (~/.ssh/id_rsa) is protected with the certificate export password if none is specified.
 
 #!/bin/bash
 KEYSTORE_DIR='/etc/pki'
