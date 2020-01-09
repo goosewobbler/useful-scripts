@@ -27,8 +27,7 @@
 KEYSTORE_DIR='/etc/pki'
 TMP_DIR='/tmp'
 CA_BUNDLE_DIR="$KEYSTORE_DIR/tls/certs"
-MORPH_NPM_COMMAND="npm --registry https://npm.morph.int.tools.bbc.co.uk --cert=\"$(cat $KEYSTORE_DIR/certificate.pem)\" --key=\"$(cat $KEYSTORE_DIR/certificate.pem)\" --cafile=$CA_BUNDLE_DIR/ca-bundle.crt"
-MORPH_NPM_COMMAND_STRING='npm --registry https://npm.morph.int.tools.bbc.co.uk --cert=\"$(cat /etc/pki/certificate.pem)\" --key=\"$(cat /etc/pki/certificate.pem)\" --cafile=/etc/pki/tls/certs/ca-bundle.crt'
+MORPH_NPM_COMMAND="npm --registry https://npm.morph.int.tools.bbc.co.uk --cert=\\\"\$(cat $KEYSTORE_DIR/certificate.pem)\\\" --key=\\\"\$(cat $KEYSTORE_DIR/certificate.pem)\\\" --cafile=$CA_BUNDLE_DIR/ca-bundle.crt"
 BACKUP_ROOT_DIR="$HOME/Certs/backups"
 BACKUP_DIR="$BACKUP_ROOT_DIR/$(date +"%d%m%Y-%H%M%S")"
 SSH_CONFIG_DIR="$HOME/.ssh"
@@ -114,9 +113,8 @@ echo "\nCertificates updated."
 read -p $'\nPlease enter an alias for morph npm (press enter if you do not wish to set an alias): ' MORPH_NPM_ALIAS
 
 if [ $MORPH_NPM_ALIAS ]; then
-    alias $MORPH_NPM_ALIAS="$MORPH_NPM_COMMAND"
-    echo "Alias set for '$MORPH_NPM_ALIAS'.  You should add the following command to your shell config in order to persist the alias:"
-    echo "\n${magenta}alias $MORPH_NPM_ALIAS=\"$MORPH_NPM_COMMAND_STRING\""
+    echo "Here is your alias command, you will need to add it to your shell config to ensure it persists"
+    echo "\n${magenta}alias $MORPH_NPM_ALIAS=\"$MORPH_NPM_COMMAND\""
 fi
 
 echo "\n${green}Complete.${reset}"
