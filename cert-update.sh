@@ -95,7 +95,7 @@ echo "$(cat "$SSH_CONFIG_DIR/id_rsa.pub") $2" > "$SSH_CONFIG_DIR/id_rsa.pub"
  
 echo "\nDownloading cloud CA..."
 curl https://ca.dev.bbc.co.uk/cloud-ca.pem > "$TMP_DIR/cloud-ca.pem"
-politeSudo mv "$TMP_DIR/cloud-ca.pem" "$KEYSTORE_DIR/ca-bundle.crt"
+politeSudo cp "$TMP_DIR/cloud-ca.pem" $KEYSTORE_DIR
  
 echo "\nExporting system CAs..."
 security find-certificate -a -p /System/Library/Keychains/SystemRootCertificates.keychain > "$TMP_DIR/root-cas.pem"
