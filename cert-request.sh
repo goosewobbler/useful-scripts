@@ -1,5 +1,19 @@
 #!/bin/bash
-# usage: sh ./cert-request.sh team-picker.files.bbci.co.uk
+# Cert Request Script
+# This script automates creation of a CSR file for a given domain.
+#
+# ---
+# Usage: 
+# 
+# sh ~/Scripts/cert-request.sh [your.domain]
+# ---
+#
+# Resulting files:
+#     your.domain.csr
+#     your.domain.key
+#     chain.pem
+#
+
 CERT_DOMAIN=$1
 TMP_DIR='/tmp'
 
