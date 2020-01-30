@@ -56,7 +56,7 @@ echo "\nDownloading Globalsign root cert..."
 curl https://secure.globalsign.net/cacert/Root-R1.crt > "$TMP_DIR/root.der"
 
 echo "\nDownloading Globalsign intermediate cert..."
-curl https://secure.globalsign.com/cacert/gsorganizationvalsha2g2r1.crt > "$TMP_DIR/intermediate.der"
+curl http://secure.globalsign.com/cacert/gsrsaovsslca2018.crt > "$TMP_DIR/intermediate.der"
 
 openssl x509 -in "$TMP_DIR/root.der" -inform der -outform pem -out "$TMP_DIR/root.pem"
 openssl x509 -in "$TMP_DIR/intermediate.der" -inform der -outform pem -out "$TMP_DIR/intermediate.pem"
